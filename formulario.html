@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Votación</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <h1>Formulario de Votación</h1>
+    <hr>
+    <form id="formulario" action="procesar.php" method="post">
+        <table>
+            <tr>
+                <td><label for="nombre_apellido">Nombre y Apellido:</label></td>
+                <td><input type="text" id="nombre_apellido" name="nombre_apellido" required></td>
+            </tr>
+            <tr>
+                <td><label for="alias">Alias:</label></td>
+                <td><input type="text" id="alias" name="alias" required></td>
+            </tr>
+            <tr>
+                <td><label for="rut">RUT:</label></td>
+                <td><input type="text" id="rut" name="rut" required></td>
+            </tr>
+            <tr>
+                <td><label for="email">Email:</label></td>
+                <td><input type="email" id="email" name="email" required></td>
+            </tr>
+            <tr>
+                <td><label for="region">Región:</label></td>
+                <td>
+                    <select id="region" name="region" required></select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="comuna">Comuna:</label></td>
+                <td>
+                    <select id="comuna" name="comuna" required></select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="candidato">Candidato:</label></td>
+                <td>
+                    <select id="candidato" name="candidato" required></select>
+                </td>
+            </tr>
+            <tr>
+                <td>Como se enteró de Nosotros:</td>
+                <td>
+                    <input type="checkbox" class="seleccionable" name="entero[]" value="Web"> Web
+                    <input type="checkbox" class="seleccionable" name="entero[]" value="Tv"> Tv
+                    <input type="checkbox" class="seleccionable" name="entero[]" value="Redes sociales"> Redes sociales
+                    <input type="checkbox" class="seleccionable" name="entero[]" value="Amigo"> Amigo
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:center;">
+                    <input type="submit" value="Enviar">
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+
+</html>
