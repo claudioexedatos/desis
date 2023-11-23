@@ -1,0 +1,34 @@
+Descripción
+El programa "Formulario" es una aplicación web diseñada para recopilar información de usuarios a través de un formulario interactivo. Proporciona campos para datos personales, opciones para la selección de regiones, comunas y candidatos, y una sección para que los usuarios indiquen cómo se enteraron del servicio.
+
+Funcionalidades Principales
+Captura de Datos:
+
+Recopila información personal como nombre, apellido, alias, RUT y correo electrónico.
+Permite la selección de región, comuna y candidato a través de menús desplegables.
+Ofrece opciones para que los usuarios indiquen cómo se enteraron del servicio.
+Validación de Datos:
+
+Valida el formato del RUT chileno en tiempo real mientras se ingresa.
+Verifica que al menos dos opciones sean seleccionadas en la sección "Cómo se enteró de Nosotros".
+Tecnologías Utilizadas
+Frontend:
+
+HTML
+CSS
+JavaScript (jQuery)
+Backend:
+
+PHP para el manejo del servidor apache y la interacción con la base de datos Mysql.
+Uso
+Acceso al Formulario:
+
+Navegar a la URL donde se aloja el formulario.
+Completar el Formulario:
+
+Ingresar los datos solicitados en los campos correspondientes.
+Seleccionar una región, comuna y candidato.
+Marcar al menos dos opciones en la sección "Cómo se enteró de Nosotros".
+Enviar el Formulario:
+
+Presionar el botón "Enviar" para enviar los datos.
