@@ -124,13 +124,23 @@ $(document).ready(function () {
         });
     });
 
-    document.getElementById('formulario').addEventListener('submit', function(event) {
+    /* document.getElementById('formulario').addEventListener('submit', function(event) {
         var checkboxes = document.querySelectorAll('input[name="entero[]"]:checked');
         
         // Validar que al menos dos checkboxes estén seleccionados
         if (checkboxes.length < 2) {
             event.preventDefault(); // Evitar que el formulario se envíe
             alert("Debe seleccionar al menos dos opciones en 'Como se enteró de Nosotros'.");
+        }
+    });  */
+
+    document.getElementById("formulario").addEventListener("submit", function(event) {
+        const email = document.getElementById("email").value;
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Expresión regular para validar el formato del correo electrónico
+        
+        if (!regex.test(email)) {
+            alert("El correo electrónico es inválido. Por favor, ingrese un correo electrónico válido.");
+            event.preventDefault(); // Evita que el formulario se envíe si el correo electrónico es inválido
         }
     });
 });

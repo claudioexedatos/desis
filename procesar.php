@@ -5,18 +5,15 @@ if ($conexion->connect_error) {
     die("Error de conexión: " . $conexion->connect_error);
 }
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if (isset($_POST['obtener_regiones'])) {
     $sqlRegiones = "SELECT id_region, nombre_region FROM regiones";
     $resultadoRegiones = $conexion->query($sqlRegiones);
 
     if ($resultadoRegiones) {
         $regiones = [];
-
-        // Agregar el option por defecto
-        $regiones[] = [
-            'id' => '',
-            'nombre' => 'Seleccione su región'
-        ];
 
         while ($row = $resultadoRegiones->fetch_assoc()) {
             $regiones[] = [
@@ -34,9 +31,7 @@ if (isset($_POST['obtener_regiones'])) {
     } else {
         echo "Error al obtener datos de la base de datos";
     }
-}
-
-if (isset($_POST['obtener_comunas_por_region'])) {
+} elseif (isset($_POST['obtener_comunas_por_region'])) {
     $regionId = $_POST['region_id'];
 
     $sqlComunas = "SELECT id_comuna, nombre_comuna FROM comunas WHERE id_region = $regionId";
@@ -61,9 +56,7 @@ if (isset($_POST['obtener_comunas_por_region'])) {
     } else {
         echo "Error al obtener datos de la base de datos";
     }
-}
-
-if (isset($_POST['obtener_candidatos_por_comuna'])) {
+} elseif (isset($_POST['obtener_candidatos_por_comuna'])) {
     $comunaId = $_POST['comuna_id'];
 
     $sqlCandidatos = "SELECT id_candidato, nombre FROM candidato WHERE id_comuna = $comunaId";
@@ -88,57 +81,51 @@ if (isset($_POST['obtener_candidatos_por_comuna'])) {
     } else {
         echo "Error al obtener datos de candidatos por comuna";
     }
-}
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Establecer la conexión a la base de datos
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Obtener los valores del formulario
+    $nombre_apellido = $_POST["nombre_apellido"];
+    $alias = $_POST["alias"];
+    $rut = $_POST["rut"];
+    $email = $_POST["email"];
+    $region = $_POST["region"];
+    $comuna = $_POST["comuna"];
+    $candidato = $_POST["candidato"];
+    $comoseentero = implode(", ", $_POST["entero"]); // Convertir el array en una cadena
 
-    // Verificar la conexión
-    if ($conexion->connect_error) {
-        die("Error de conexión: " . $conexion->connect_error);
-    }
+    // Consultar si el RUT ya existe en la base de datos
+    $sql_verificar_rut = "SELECT COUNT(*) AS count FROM votantes WHERE rut = ?";
+    $stmt_verificar_rut = $conexion->prepare($sql_verificar_rut);
+    $stmt_verificar_rut->bind_param("s", $rut);
+    $stmt_verificar_rut->execute();
+    $stmt_verificar_rut->bind_result($count);
+    $stmt_verificar_rut->fetch();
+    $stmt_verificar_rut->close();
 
-    // Obtener los valores del formulario y validarlos
-    $nombre_apellido = validar($_POST["nombre_apellido"]);
-    $alias = validar($_POST["alias"]);
-    $rut = validar($_POST["rut"]);
-    $email = validar($_POST["email"]);
-    $region = validar($_POST["region"]);
-    $comuna = validar($_POST["comuna"]);
-    $candidato = validar($_POST["candidato"]);
-    $comoseentero = validarComoseEntero($_POST["entero"]); // Esta función se encarga de validar los checkboxes
+    if ($count > 0) {
+        echo "El RUT ya existe en la base de datos.";
+    } else {
+        // Preparar la consulta SQL para insertar los datos
+        $sql_insertar = "INSERT INTO votantes (nombre_apellido, alias, rut, email, id_region, id_comuna, id_candidato, comoseentero) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt_insertar = $conexion->prepare($sql_insertar);
 
-    // Función para validar los datos
-    function validar($datos) {
-        $datos = trim($datos); // Eliminar espacios en blanco al inicio y al final
-        $datos = stripslashes($datos); // Eliminar barras invertidas
-        $datos = htmlspecialchars($datos); // Convertir caracteres especiales a entidades HTML
-        return $datos;
-    }
+        if ($stmt_insertar) {
+            // Vincular los parámetros con la consulta preparada
+            $stmt_insertar->bind_param("ssssssss", $nombre_apellido, $alias, $rut, $email, $region, $comuna, $candidato, $comoseentero);
 
-    // Función para validar los datos de los checkboxes
-    function validarComoseEntero($checkboxes) {
-        // Verificar que al menos dos opciones hayan sido seleccionadas
-        if (count($checkboxes) >= 2) {
-            return implode(", ", $checkboxes); // Devolver un string con las opciones seleccionadas separadas por coma
+            // Ejecutar la consulta preparada para insertar los datos
+            if ($stmt_insertar->execute()) {
+                echo "Datos insertados correctamente en la base de datos.";
+            } else {
+                echo "Error al insertar datos: " . $stmt_insertar->error;
+            }
+
+            // Cerrar la consulta preparada para la inserción
+            $stmt_insertar->close();
         } else {
-            // Si no se han seleccionado al menos dos opciones, puedes manejar la validación de acuerdo a tu lógica
-            // Por ejemplo, podrías mostrar un mensaje de error o tomar otra acción requerida.
-            return "Menos de dos opciones seleccionadas";
+            echo "Error en la preparación de la consulta de inserción.";
         }
     }
-
-    // Insertar los datos en la base de datos
-    $sql = "INSERT INTO nombre_tabla (nombre_apellido, alias, rut, email, region, comuna, candidato, comoseentero) 
-            VALUES ('$nombre_apellido', '$alias', '$rut', '$email', '$region', '$comuna', '$candidato', '$comoseentero')";
-
-    if ($conexion->query($sql) === TRUE) {
-        echo "Datos insertados correctamente en la base de datos.";
-    } else {
-        echo "Error al insertar datos: " . $conexion->error;
-    }
-
-    // Cerrar la conexión a la base de datos
-    //$conexion->close();
 }
 
 
